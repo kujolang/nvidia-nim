@@ -10,6 +10,6 @@ Contract version: `1.0.1`.
 | Authentication/security | PASS | HTTPS, host configuration, protected auth, redaction tests. |
 | Deterministic tests | PASS | Four offline tests. |
 | Kennel manifest/dependencies/exports | PASS | Immutable AI SDK ref and explicit exports. |
-| Clean-room distribution | PENDING | Complete after immutable tag. |
-| Release metadata | PENDING | Complete after immutable tag. |
+| Clean-room distribution | PASS | Fresh v0.1.1 install, reinstall, validation, and installed smoke. |
+| Release metadata | PASS | Immutable v0.1.1 tag and verified remote commit. |
 | Documentation/agent guidance | PASS | README, report, conformance, example, AGENTS. |
