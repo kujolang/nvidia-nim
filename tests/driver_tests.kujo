@@ -1,0 +1,2 @@
+test_setup { from src.provider import nvidia_nim_provider, nvidia_nim_driver }
+test "driver encodes compatible chat" { p := nvidia_nim_provider({"model": "m"}); d := nvidia_nim_driver(); assert_equal(d["version"], "1.0.0"); assert_equal(d["encode_chat"]({"provider": p, "messages": [], "resolved_options": {}})["url"], "https://integrate.api.nvidia.com/v1/chat/completions") }

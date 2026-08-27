@@ -1,0 +1,17 @@
+func get(o, k, f) { if type(o) == "dict" && has_key(o, k) { return o[k] }; return f }
+func host_of(u) { p := split(u, "/"); if len(p) >= 3 { return lower(p[2]) }; return "" }
+func redact(v, s) { if type(v) == "string" && type(s) == "string" && s != "" { return replace(v, s, "[REDACTED]") }; return v }
+func valid(u) { if type(u) != "string" || trim(u) == "" { return "NIM base URL required." }; if contains(u, "@") || contains(u, "?") || contains(u, "#") { return "NIM URL unsafe." }; if contains(lower(u), "https://") { return "" }; return "NIM remote endpoint must use HTTPS." }
+func create_client_impl(config) { if type(config) != "dict" { config := {} }; base := get(config, "base_url", "https://integrate.api.nvidia.com/v1"); key := get(config, "api_key", env("NVIDIA_API_KEY")); if type(key) != "string" { key := "" }; return {"base_url": base, "api_key": key, "model": get(config, "model", ""), "timeout": get(config, "timeout", 60.0), "transport": get(config, "transport", null), "validation_error": valid(base)} }
+func transport_for(c) { if type(get(c, "transport", null)) == "function" { return c["transport"] }; return http_request }
+func request(c, payload) {
+	if c["validation_error"] != "" { return {"ok": false, "message": c["validation_error"]} }
+	h := {"Content-Type": "application/json", "Authorization": "Bearer " + c["api_key"]}
+	result := transport_for(c)(c["base_url"] + "/chat/completions", {"method": "POST", "timeout": c["timeout"], "_headers": h, "_body": to_json(payload)})
+	match result {
+		case Err(e): { return {"ok": false, "message": redact(to_string(e), c["api_key"])} }
+		case Ok(r): { s := get(r, "_status", 0); raw := get(r, "_body", ""); d := null; try { d = parse_json(raw) } except e { d = {} }; if s < 200 || s > 299 { return {"ok": false, "status_code": s, "data": d} }; return {"ok": true, "status_code": s, "data": d} }
+	}
+}
+export create_client := create_client_impl
+export chat := func(c, options) { p := options; if type(p) != "dict" { p := {} }; if has_key(p, "model") == 0 { p["model"] := c["model"] }; return request(c, p) }

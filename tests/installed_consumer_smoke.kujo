@@ -1,0 +1,2 @@
+test_setup { from nvidia_nim import create_client, nvidia_nim_provider }
+test "installed exports resolve" { c := create_client({"model": "m"}); assert_equal(c["model"], "m"); assert_equal(nvidia_nim_provider({})["name"], "nvidia-nim") }

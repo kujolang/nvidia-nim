@@ -1,0 +1,4 @@
+from nvidia_nim import create_client, chat
+client := create_client({"model": "meta/llama-3.1-8b-instruct"})
+result := chat(client, {"messages": [{"role": "user", "content": "Say hello."}]})
+print(result["data"])

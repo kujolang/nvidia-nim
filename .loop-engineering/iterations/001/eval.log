@@ -1,0 +1,7 @@
+gate release_gate: skipped (no changed files matched)
+gate typecheck: skipped (no changed files matched)
+gate build: skipped (no changed files matched)
+
+## gate: diff_check
+$ git diff --check
+gate diff_check: pass

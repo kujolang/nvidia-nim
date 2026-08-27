@@ -1,0 +1,52 @@
+objective: "Build and release the NVIDIA NIM Kujo provider with compatible chat, endpoint/model configuration, deterministic tests, security review, Contract v1 evidence, and clean-room validation."
+checklist_file: ""
+max_iterations: 8
+max_no_progress: 2
+max_consecutive_failures: 3
+
+allowed_actions:
+  - read_files
+  - edit_files
+  - run_tests
+  - commit_local_changes
+  - push_remote_changes
+
+blocked_actions:
+  - deploy
+  - destructive_cleanup
+  - production_config_change
+
+eval_gates:
+  - id: release_gate
+    command: "KUJO_BIN=/tmp/kujo-v102-release/kujo bash scripts/release_quality_gate.sh"
+    required: true
+    when_files_match:
+      - "src/**"
+
+  - id: typecheck
+    command: "pnpm run typecheck"
+    required: true
+    when_files_match:
+      - "src/**"
+
+  - id: build
+    command: "pnpm run build"
+    required: true
+    when_files_match:
+      - "src/**"
+
+  - id: diff_check
+    command: "git diff --check"
+    required: true
+
+commit:
+  enabled: false
+  strategy: small_meaningful
+  push: false
+
+memory:
+  enabled: false
+  provider: strata
+  project: "Agent Notes"
+  mode: consolidate
+  retrieval_tests: true

@@ -1,0 +1,3 @@
+from src.provider import nvidia_nim_provider, nvidia_nim_driver
+export nvidia_nim_provider := nvidia_nim_provider
+export nvidia_nim_driver := nvidia_nim_driver

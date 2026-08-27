@@ -1,0 +1,4 @@
+test_setup { from src.nvidia_nim import create_client, chat }
+test "NIM compatible chat request" { c := create_client({"api_key": "fixture", "model": "meta/llama", "transport": func(url, options) { assert_equal(contains(url, "/chat/completions"), 1); assert_equal(options["_headers"]["Authorization"], "Bearer fixture"); return Ok({"_status": 200, "_body": "{\"choices\":[]}"}) }}); assert_true(chat(c, {"messages": []})["ok"]) }
+test "self-hosted HTTPS endpoint is configurable" { c := create_client({"base_url": "https://nim.internal.example", "transport": func(url, options) { return Ok({"_status": 200, "_body": "{}"}) }}); assert_true(chat(c, {})["ok"]) }
+test "unsafe endpoint is rejected" { assert_true(create_client({"base_url": "http://remote.example"})["validation_error"] != "") }
